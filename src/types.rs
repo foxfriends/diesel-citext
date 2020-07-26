@@ -74,7 +74,7 @@ impl Eq for CiString {}
 
 impl Hash for CiString {
     fn hash<H: Hasher>(&self, hasher: &mut H) {
-        self.value.hash(hasher);
+        self.value.to_lowercase().hash(hasher);
     }
 }
 
