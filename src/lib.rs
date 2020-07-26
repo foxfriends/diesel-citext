@@ -10,3 +10,10 @@ extern crate actix_web;
 
 pub mod sql_types;
 pub mod types;
+mod expression_methods;
+
+pub mod prelude {
+    pub use crate::sql_types::Citext;
+    pub use crate::types::CiString;
+    pub use crate::expression_methods::CitextExpressionMethods;
+}
