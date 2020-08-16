@@ -1,7 +1,7 @@
 use crate::sql_types::Citext;
 use diesel::expression::operators::{Concat, Like, NotLike};
 use diesel::expression::{AsExpression, Expression};
-use diesel::sql_types::Nullable;
+use diesel::sql_types::{Nullable, SqlType};
 
 /// Methods present on citext expressions
 pub trait CitextExpressionMethods: Expression + Sized {
@@ -55,7 +55,11 @@ pub trait CitextExpressionMethods: Expression + Sized {
     /// assert_eq!(Ok(expected_names), names);
     /// # }
     /// ```
-    fn concat<T: AsExpression<Self::SqlType>>(self, other: T) -> Concat<Self, T::Expression> {
+    fn concat<T>(self, other: T) -> Concat<Self, T::Expression>
+    where
+        Self::SqlType: SqlType,
+        T: AsExpression<Self::SqlType>,
+    {
         Concat::new(self, other.as_expression())
     }
 
@@ -87,7 +91,11 @@ pub trait CitextExpressionMethods: Expression + Sized {
     /// #     Ok(())
     /// # }
     /// ```
-    fn like<T: AsExpression<Self::SqlType>>(self, other: T) -> Like<Self, T::Expression> {
+    fn like<T>(self, other: T) -> Like<Self, T::Expression>
+    where
+        Self::SqlType: SqlType,
+        T: AsExpression<Self::SqlType>,
+    {
         Like::new(self.as_expression(), other.as_expression())
     }
 
@@ -119,7 +127,11 @@ pub trait CitextExpressionMethods: Expression + Sized {
     /// #     Ok(())
     /// # }
     /// ```
-    fn not_like<T: AsExpression<Self::SqlType>>(self, other: T) -> NotLike<Self, T::Expression> {
+    fn not_like<T>(self, other: T) -> NotLike<Self, T::Expression>
+    where
+        Self::SqlType: SqlType,
+        T: AsExpression<Self::SqlType>,
+    {
         NotLike::new(self.as_expression(), other.as_expression())
     }
 }

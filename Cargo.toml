@@ -21,4 +21,5 @@ serde = { version = "1.0", features = ["derive"]}
 [dependencies.diesel]
 branch = "master"
 features = ["postgres"]
+default-features = false
 git = "https://github.com/diesel-rs/diesel"

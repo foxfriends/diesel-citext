@@ -19,7 +19,14 @@ use actix_web::dev::FromParam;
 /// `CiString` is a CaseInsensitive String type that can be used as the key for
 /// a hashmap as well as be written to the page. It implements a variety of traits
 /// to make it easy to convert from and to &str and String types.
-#[derive(Clone, Debug, Serialize, Deserialize, FromSqlRow, AsExpression)]
+#[derive(
+    Clone,
+    Debug,
+    Serialize,
+    Deserialize,
+    diesel::deserialize::FromSqlRow,
+    diesel::expression::AsExpression,
+)]
 #[serde(transparent)]
 #[sql_type = "Citext"]
 pub struct CiString {
@@ -128,10 +135,9 @@ impl From<&str> for CiString {
 }
 
 impl FromSql<Citext, Pg> for CiString {
-    fn from_sql(bytes: Option<backend::RawValue<Pg>>) -> deserialize::Result<Self> {
+    fn from_sql(bytes: backend::RawValue<Pg>) -> deserialize::Result<Self> {
         use std::str;
-        let some_bytes = not_none!(bytes);
-        let string = str::from_utf8(some_bytes.as_bytes())?;
+        let string = str::from_utf8(bytes.as_bytes())?;
         Ok(CiString {
             value: string.to_owned(),
         })
@@ -147,10 +153,9 @@ impl ToSql<Citext, Pg> for CiString {
 }
 
 impl FromSql<Citext, Pg> for String {
-    fn from_sql(bytes: Option<backend::RawValue<Pg>>) -> deserialize::Result<Self> {
+    fn from_sql(bytes: backend::RawValue<Pg>) -> deserialize::Result<Self> {
         use std::str;
-        let some_bytes = not_none!(bytes);
-        let string = str::from_utf8(some_bytes.as_bytes())?;
+        let string = str::from_utf8(bytes.as_bytes())?;
         Ok(string.to_owned())
     }
 }
